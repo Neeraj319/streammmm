@@ -1,0 +1,8 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - '8000:3000'
