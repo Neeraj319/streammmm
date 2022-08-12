@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yarn dev
+yarn start:dev
