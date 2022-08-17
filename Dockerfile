@@ -1,18 +1,29 @@
 FROM node:16.16.0-alpine3.15 AS development
 
-WORKDIR /app
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-COPY package*.json /app/
-COPY yarn.lock /app/
-RUN npm install glob rimraf
-RUN apt update && apt install netcat
-RUN npm install yarn
+WORKDIR /home/app
 
-RUN yarn install
+USER root
+RUN apk update && apk add netcat-openbsd
+
+RUN chown -R appuser:appgroup /home/app
+RUN chmod 777 /home/app
+
+USER appuser
+COPY package*.json /home/app/
+COPY yarn.lock /home/app/
 
 
-COPY . /app/
+COPY prisma /home/app/prisma/
+RUN yarn 
 
-RUN chmod +x /app/entrypoint.sh
+COPY . /home/app/
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+USER root
+RUN chmod +x /home/app/entrypoint.sh
+
+USER appuser
+RUN npx prisma generate
+
+ENTRYPOINT ["/home/app/entrypoint.sh"]

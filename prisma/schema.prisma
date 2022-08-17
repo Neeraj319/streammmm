@@ -8,4 +8,28 @@ datasource db {
 }
 
 
+model User{
+  id Int @id @default(autoincrement())
+  username String @db.VarChar(20)
+  passowrd String @db.VarChar(200)
+  first_name String? @db.VarChar(20)
+  last_name String? @db.VarChar(20)
+  profile_picture String? @db.VarChar(200)
+
+  channel Channel?
+
+}
+enum Status {
+  LIVE
+  IDLE
+}
+
+model Channel{
+  id Int @id @default(autoincrement())
+  status Status @default(IDLE) 
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
+}
+
+
 

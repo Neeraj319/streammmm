@@ -9,7 +9,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=streammm
+      - POSTGRES_DB=app_db
   app:
     build: .
     volumes:
