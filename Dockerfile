@@ -1,16 +1,16 @@
 FROM node:16.16.0-alpine3.15 AS development
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+#RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /home/app
 
-USER root
-RUN apk update && apk add netcat-openbsd
+#USER root
+#RUN apk update && apk add netcat-openbsd
 
-RUN chown -R appuser:appgroup /home/app
-RUN chmod 777 /home/app
+#RUN chown -R appuser:appgroup /home/app
+#RUN chmod 775 /home/app
 
-USER appuser
+#USER appuser
 COPY package*.json /home/app/
 COPY yarn.lock /home/app/
 
@@ -20,10 +20,10 @@ RUN yarn
 
 COPY . /home/app/
 
-USER root
+#USER root
 RUN chmod +x /home/app/entrypoint.sh
 
-USER appuser
+#USER appuser
 RUN npx prisma generate
 
 ENTRYPOINT ["/home/app/entrypoint.sh"]
