@@ -13,7 +13,7 @@ services:
   app:
     build: .
     volumes:
-      - .:/home/app
+      - .:/app
     ports:
       - '8000:3000'
     depends_on:
