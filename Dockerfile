@@ -13,7 +13,7 @@ WORKDIR /home/app
 #USER appuser
 COPY package*.json /home/app/
 COPY yarn.lock /home/app/
-
+RUN yarn global add @nestjs/cli
 
 COPY prisma /home/app/prisma/
 RUN yarn 
