@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json /app/
 COPY yarn.lock /app/
 RUN npm install glob rimraf
-
+RUN apt update && apt install netcat
 RUN npm install yarn
 
 RUN yarn install
