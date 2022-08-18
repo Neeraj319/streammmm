@@ -10,14 +10,17 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=app_db
+    env_file: .env
   app:
     build: .
     volumes:
-      - .:/app
+      - ./src:/app/src
+      - ./prisma:/app/prisma
     ports:
       - '8000:3000'
     depends_on:
       - db
+    env_file: .env
 
 volumes:
   postgres_data:
