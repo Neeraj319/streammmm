@@ -3,7 +3,7 @@
 .gitignore
 .dockerignore
 
-# Build dependencies
+# Build dependencies.docker
 dist
 node_modules
 coverage
