@@ -17,5 +17,7 @@ export class AuthService {
     });
   }
 
-  async addUser() {}
+  async addUser() {
+    /* add user to the database using this service */
+  }
 }
