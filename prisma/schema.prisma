@@ -11,14 +11,13 @@ datasource db {
 
 model User{
   id Int @id @default(autoincrement())
-  username String @db.VarChar(20)
-  passowrd String @db.VarChar(200)
+  username String @db.VarChar(20) @unique
+  password String @db.VarChar(200)
   first_name String? @db.VarChar(20)
   last_name String? @db.VarChar(20)
   profile_picture String? @db.VarChar(200)
 
   channel Channel?
-
 }
 enum Status {
   LIVE
