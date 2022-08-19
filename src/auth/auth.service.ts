@@ -21,12 +21,8 @@ export class AuthService {
   }
 
   async addUser(user: CreateUserDto) {
-    bcrypt.hash(user.password, 10, (error, hash) => {
-      if (error) {
-        console.log(error);
-      }
-      user.password = hash;
-    });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
     try {
       await this.prisma.user.create({ data: { ...user } });
     } catch (e) {
@@ -36,4 +32,11 @@ export class AuthService {
         .raiseCustomError('User with that username already exists ');
     }
   }
+  // async generateJwt(user: User): Promise<string> {
+  //   return await this.prisma.user.findOne({
+  //     where: {
+  //       id: user.id,
+  //     },
+  //   });
+  // }
 }
