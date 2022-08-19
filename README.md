@@ -1,9 +1,13 @@
 # Installation
 
-```
-docker-compose up --build
-```
+if first run
 
 ```
-docker cp node_container_id:/app/node_modules .
+make build
+```
+
+for running
+
+```
+make up
 ```
