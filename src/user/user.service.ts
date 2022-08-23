@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
-import { CreateUserDto } from './dto/createUser.dto';
-import { ErrorHandler } from './utils/errorHandler';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { ErrorHandler } from './utils/errorHandler';
 
 @Injectable()
-export class AuthService {
+export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-
   async getUsers(): Promise<User[]> {
     return await this.prisma.user.findMany();
   }
@@ -32,11 +31,19 @@ export class AuthService {
         .raiseCustomError('User with that username already exists ');
     }
   }
-  // async generateJwt(user: User): Promise<string> {
-  //   return await this.prisma.user.findOne({
-  //     where: {
-  //       id: user.id,
-  //     },
-  //   });
-  // }
+  async authenticateUser(username: string, password: string): Promise<User> {
+    const user: User = await this.prisma.user.findFirst({
+      where: {
+        username: username,
+      },
+    });
+    if (!user) {
+      throw new Error('invalid username or password');
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('invalid username or password');
+    }
+    return user;
+  }
 }
