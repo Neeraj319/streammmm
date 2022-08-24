@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
@@ -8,29 +8,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model User{
-  id Int @id @default(autoincrement())
-  username String @db.VarChar(20) @unique
-  password String @db.VarChar(200)
-  first_name String? @db.VarChar(20)
-  last_name String? @db.VarChar(20)
+model User {
+  id              Int     @id @default(autoincrement())
+  username        String  @unique @db.VarChar(20)
+  password        String  @db.VarChar(200)
+  first_name      String? @db.VarChar(20)
+  last_name       String? @db.VarChar(20)
   profile_picture String? @db.VarChar(200)
-  tokenVersion Int @default(0)
+  refreshToken    String? @db.VarChar(200)
 
   channel Channel?
 }
+
 enum Status {
   LIVE
   IDLE
 }
 
-model Channel{
-  id Int @id @default(autoincrement())
-  status Status @default(IDLE) 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+model Channel {
+  id     Int    @id @default(autoincrement())
+  status Status @default(IDLE)
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
 }
-
-
-

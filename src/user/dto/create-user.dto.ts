@@ -5,6 +5,7 @@ import {
   IsOptional,
   MinLength,
   MaxLength,
+  IsNumber,
 } from 'class-validator';
 
 Injectable();

@@ -1,9 +1,10 @@
-import { Controller, Param, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LoginUserDto } from './dto/loginUser.dto';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -46,6 +47,27 @@ export class AuthController {
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: e.message,
+      });
+    }
+  }
+  @Post('refresh')
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'Access and Refresh token generated successfully',
+  })
+  async getRefreshToken(
+    @Body() refreshTokenDto: RefreshTokenDto,
+    @Res() res: Response,
+  ) {
+    try {
+      return res.send(
+        await this.authService.genTokenByRefreshToken(
+          refreshTokenDto.refreshToken,
+        ),
+      );
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,

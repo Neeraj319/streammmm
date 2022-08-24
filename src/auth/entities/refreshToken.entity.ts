@@ -1,4 +1,7 @@
+import { TOKEN_TYPE } from './accessToken.entity';
+
 export class RefreshTokenPayload {
-  version: number;
+  token: string;
   userId: number;
+  type: TOKEN_TYPE.REFRESH;
 }

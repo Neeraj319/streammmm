@@ -16,12 +16,31 @@ export class AuthService {
     password: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     let user: User;
+    let refreshToken: string;
     user = await this.userService.authenticateUser(username, password);
+
     const accessToken = await this.tokenService.genAccessToken(user);
-    const refreshToken = await this.tokenService.genRefreshToken(user);
+
+    refreshToken = await this.tokenService.genRefreshToken(user);
+
+    await this.userService.updateRefreshToken(user.id, refreshToken);
     return {
       accessToken,
       refreshToken,
+    };
+  }
+  async genTokenByRefreshToken(refreshToken: string) {
+    const result = await this.tokenService.decodeToken(refreshToken);
+    const user = await this.userService.getUserById(result.userId);
+    if (user.refreshToken !== refreshToken) {
+      throw new Error('Invalid refresh token');
+    }
+    const data = await this.tokenService.genAccessToken(user);
+    const refreshTokenNew = await this.tokenService.genRefreshToken(user);
+    await this.userService.updateRefreshToken(user.id, refreshTokenNew);
+    return {
+      accessToken: data,
+      refreshToken: refreshTokenNew,
     };
   }
 

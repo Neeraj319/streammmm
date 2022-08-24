@@ -16,22 +16,28 @@ export class TokenService {
     const result = {
       userId: user.id,
       username: user.username,
+      type: 'access',
     } as JwtAccessTokenPayload;
     return await this.jwtService.signAsync(result);
   }
 
   async genRefreshToken(user: User): Promise<string> {
-    const result = {
+    const payLoad = {
       userId: user.id,
-      version: user.tokenVersion,
+      type: 'refresh',
     } as RefreshTokenPayload;
-    return await this.jwtService.signAsync(result, {
+
+    const newToken = this.jwtService.signAsync(payLoad, {
       expiresIn: this.configService.get('jwt.refreshExpiresIn', {
         infer: true,
       }),
     });
+    return newToken;
   }
-  async decodeRefreshToken(token: string): Promise<RefreshTokenPayload> {
-    return this.jwtService.verifyAsync(token);
+
+  async decodeToken<T extends JwtAccessTokenPayload | RefreshTokenPayload>(
+    token: string,
+  ): Promise<T> {
+    return await this.jwtService.verifyAsync(token);
   }
 }
