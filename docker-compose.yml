@@ -14,8 +14,7 @@ services:
   app:
     build: .
     volumes:
-      - ./src:/app/src
-      - ./prisma:/app/prisma
+      - .:/app
     ports:
       - '8000:3000'
     depends_on:
