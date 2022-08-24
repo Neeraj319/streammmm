@@ -1,10 +1,12 @@
 import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
+
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
