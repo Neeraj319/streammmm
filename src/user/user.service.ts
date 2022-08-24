@@ -55,4 +55,8 @@ export class UserService {
       data: { refreshToken: token },
     });
   }
+
+  async findAll(): Promise<User[]> {
+    return await this.prisma.user.findMany();
+  }
 }
