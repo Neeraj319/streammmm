@@ -4,7 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ErrorHandler } from './utils/errorHandler';
-import { UserResponseEntity } from './entities/user.entity';
+import { UserResponseEntity } from './entities/user-response.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -85,11 +86,34 @@ export class UserService {
       select: {
         username: true,
         id: true,
-        refreshToken: true,
         first_name: true,
         last_name: true,
       },
     });
     return data;
+  }
+
+  async updateUser(
+    userId: number,
+    userDto: UpdateUserDto,
+  ): Promise<UserResponseEntity> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        username: userDto.username,
+      },
+    });
+    if (user) {
+      throw new Error('Username already exists');
+    }
+    console.log('here');
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        ...userDto,
+      },
+    });
+    return await this.getUserByIdExcludePassword(userId);
   }
 }

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -13,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserResponseEntity } from './entities/user.entity';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserResponseEntity } from './entities/user-response.entity';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CheckUserGuard } from 'src/auth/guards/user.guard';
@@ -39,24 +38,33 @@ export class UserController {
     description: 'Returns all the users from the database',
     type: UserResponseEntity,
   })
-  @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res: Response) {
-    const data = await this.userService.getUserByIdExcludePassword(id);
+  @Get(':userId')
+  async findOne(@Param('userId') userId: number, @Res() res: Response) {
+    const data = await this.userService.getUserByIdExcludePassword(userId);
     if (data) {
-      return data;
+      return res.status(HttpStatus.OK).json(data);
     }
     return res.status(HttpStatus.NOT_FOUND).json({
       message: 'User not found',
     });
   }
 
-  @Patch(':id')
+  @ApiBearerAuth()
+  @Patch(':userId')
   @UseGuards(JwtAuthGuard, CheckUserGuard)
-  update(
-    @Param('id') id: string,
+  async update(
+    @Param('userId') id: number,
     @Body() updateUserDto: UpdateUserDto,
     @Req() req: Request,
-  ) {}
-  @Delete(':id')
-  remove(@Param('id') id: string) {}
+    @Res() res: Response,
+  ) {
+    try {
+      const user = await this.userService.updateUser(id, updateUserDto);
+      return res.status(HttpStatus.OK).json(user);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: e.message,
+      });
+    }
+  }
 }
