@@ -1,23 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChannelDto } from './dto/create-channel.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateChannelDto } from './dto/update-channel.dto';
+import { Channel } from '@prisma/client';
 
 @Injectable()
 export class ChannelService {
-  create(createChannelDto: CreateChannelDto) {
-    return 'This action adds a new channel';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async getChannelByUserId(userId: number): Promise<Channel> {
+    return await this.prismaService.channel.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all channel`;
+  async create(userId: number) {
+    if (await this.getChannelByUserId(userId)) {
+      throw new Error('User already has a channel');
+    }
+    await this.prismaService.channel.create({
+      data: {
+        userId: userId,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} channel`;
+  async findAll(): Promise<Channel[]> {
+    return await this.prismaService.channel.findMany();
   }
 
-  update(id: number, updateChannelDto: UpdateChannelDto) {
-    return `This action updates a #${id} channel`;
+  async findOne(channelId: number): Promise<Channel> {
+    return await this.prismaService.channel.findFirstOrThrow({
+      where: {
+        id: channelId,
+      },
+    });
+  }
+
+  async update(channleId: number, updateChannelDto: UpdateChannelDto) {
+    await this.prismaService.channel.update({
+      where: {
+        id: channleId,
+      },
+      data: {
+        status: updateChannelDto.status,
+      },
+    });
+    return await this.findOne(channleId);
   }
 
   remove(id: number) {

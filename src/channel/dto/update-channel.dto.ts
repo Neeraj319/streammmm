@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateChannelDto } from './create-channel.dto';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { ChannelStatusEnum } from '../enums/channel-enum';
 
-export class UpdateChannelDto extends PartialType(CreateChannelDto) {}
+export class UpdateChannelDto {
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(ChannelStatusEnum)
+  status: ChannelStatusEnum;
+}
