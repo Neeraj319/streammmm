@@ -30,4 +30,14 @@ model Channel {
   status Status @default(IDLE)
   user   User   @relation(fields: [userId], references: [id])
   userId Int    @unique
+
+  videos Video[]
+}
+
+model Video {
+  id        Int     @id @default(autoincrement())
+  url       String  @db.VarChar(20)
+  channel   Channel @relation(fields: [channelId], references: [id])
+  channelId Int
+  fileUrl   String  @db.VarChar(200)
 }

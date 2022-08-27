@@ -1,14 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import {
   IsString,
   IsNotEmpty,
   IsOptional,
   MinLength,
   MaxLength,
-  IsNumber,
 } from 'class-validator';
 
-Injectable();
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
