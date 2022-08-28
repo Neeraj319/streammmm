@@ -50,7 +50,11 @@ export class ChannelService {
     return await this.findOne(channleId);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} channel`;
+  remove(channelId: number) {
+    return this.prismaService.channel.delete({
+      where: {
+        id: channelId,
+      },
+    });
   }
 }
