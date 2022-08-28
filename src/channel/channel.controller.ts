@@ -18,7 +18,6 @@ import { ChannelService } from './channel.service';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { Response } from 'express';
 import { ChannelResponseEntity } from './entities/channel.entity';
-import { CheckUserGuard } from 'src/auth/guards/user.guard';
 import { CheckChannelUser } from './guards/check-user-channel.guard';
 
 @ApiTags('channel')
@@ -80,13 +79,27 @@ export class ChannelController {
     @Body() updateChannelDto: UpdateChannelDto,
     @Res() res: Response,
   ) {
-    return res
-      .status(HttpStatus.OK)
-      .json(await this.channelService.update(+id, updateChannelDto));
+    try {
+      return res
+        .status(HttpStatus.OK)
+        .json(await this.channelService.update(+id, updateChannelDto));
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.channelService.remove(+id);
+  @ApiBearerAuth()
+  @Delete(':channelId')
+  @UseGuards(JwtAuthGuard, CheckChannelUser)
+  @ApiCreatedResponse({
+    status: 204,
+    description: 'Channel has been deleted successfully.',
+    type: ChannelResponseEntity,
+  })
+  async remove(@Param('channelId') channdelId: string, @Res() res: Response) {
+    await this.channelService.remove(+channdelId);
+    return res.status(HttpStatus.NO_CONTENT).json({
+      message: 'Channel deleted successfully',
+    });
   }
 }

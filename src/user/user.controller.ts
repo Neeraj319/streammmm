@@ -4,7 +4,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Res,
   HttpStatus,
   UseGuards,
@@ -55,7 +54,6 @@ export class UserController {
   async update(
     @Param('userId') id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @Req() req: Request,
     @Res() res: Response,
   ) {
     try {

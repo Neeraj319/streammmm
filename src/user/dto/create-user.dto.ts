@@ -4,11 +4,13 @@ import {
   IsOptional,
   MinLength,
   MaxLength,
+  NotContains,
 } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
+  @NotContains(' ', { message: 'username should not contain spaces' })
   @MinLength(3)
   @MaxLength(20)
   username: string;

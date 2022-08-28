@@ -1,4 +1,9 @@
-import { ExecutionContext, Injectable, CanActivate } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  CanActivate,
+  NotFoundException,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ChannelService } from '../channel.service';
 
@@ -9,7 +14,14 @@ export class CheckChannelUser implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const { user } = request;
-    if (!(await this.channelService.getChannelByUserId(+user.id))) {
+    const { channelId } = request.params;
+
+    const channel = await this.channelService.getChannelByUserId(+user.id);
+
+    if (!channel) {
+      throw new NotFoundException('channel not found');
+    }
+    if (channel.id !== +channelId) {
       return false;
     }
     return true;
