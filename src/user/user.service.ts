@@ -105,7 +105,6 @@ export class UserService {
     if (user) {
       throw new Error('Username already exists');
     }
-    console.log('here');
     await this.prisma.user.update({
       where: {
         id: userId,
