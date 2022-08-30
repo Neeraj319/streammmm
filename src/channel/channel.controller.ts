@@ -21,7 +21,7 @@ import { ChannelResponseEntity } from './entities/channel.entity';
 import { CheckChannelUser } from './guards/check-user-channel.guard';
 
 @ApiTags('channel')
-@Controller('channel')
+@Controller('')
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
 

@@ -37,7 +37,8 @@ model Channel {
 model Video {
   id        Int     @id @default(autoincrement())
   url       String  @db.VarChar(20)
+  title     String  @db.VarChar(150)
   channel   Channel @relation(fields: [channelId], references: [id])
   channelId Int
-  fileUrl   String  @db.VarChar(200)
+  fileUrl   String? @db.VarChar(200)
 }
