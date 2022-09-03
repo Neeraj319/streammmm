@@ -20,6 +20,16 @@ services:
     depends_on:
       - db
     env_file: .env
+  rtmp:
+    build: ./rtmp/
+    ports:
+      - '1935:1935'
+      - '8080:8080'
+    depends_on:
+      - app
+    volumes:
+      - video_stream_data:/tmp/hls
 
 volumes:
   postgres_data:
+  video_stream_data:
