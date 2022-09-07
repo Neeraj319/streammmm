@@ -24,11 +24,11 @@ import { ChannelService } from './channel/channel.service';
     ChannelModule,
     RouterModule.register([
       {
-        path: 'channel',
+        path: 'channel/',
         module: ChannelModule,
         children: [
           {
-            path: ':channelId/videos',
+            path: ':channelId:/videos',
             module: VideoModule,
           },
         ],

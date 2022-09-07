@@ -3,7 +3,7 @@ import { ChannelService } from 'src/channel/channel.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
-import { randomStringGenerator } from './utils/video.utils';
+import { randomStringGenerator } from '../utils/utils';
 
 @Injectable()
 export class VideoService {

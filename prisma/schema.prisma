@@ -26,12 +26,12 @@ enum Status {
 }
 
 model Channel {
-  id     Int    @id @default(autoincrement())
-  status Status @default(IDLE)
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
-
-  videos Video[]
+  id        Int     @id @default(autoincrement())
+  status    Status  @default(IDLE)
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int     @unique
+  streamKey String? @unique @db.VarChar(200)
+  videos    Video[]
 }
 
 model Video {
