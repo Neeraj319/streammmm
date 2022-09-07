@@ -34,8 +34,8 @@ export class ChannelController {
   @UseGuards(JwtAuthGuard)
   async create(@Req() req: Request, @Res() res: Response) {
     try {
-      await this.channelService.create(req.user.id);
-      return res.status(HttpStatus.CREATED).send();
+      const channel = await this.channelService.create(req.user.id);
+      return res.status(HttpStatus.CREATED).send(channel);
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
@@ -68,14 +68,14 @@ export class ChannelController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @Patch(':id')
+  @Patch(':channelId')
   @ApiCreatedResponse({
     status: 200,
     description: 'Channel has been updated successfully.',
     type: ChannelResponseEntity,
   })
   async update(
-    @Param('id') id: number,
+    @Param('channelId') id: number,
     @Body() updateChannelDto: UpdateChannelDto,
     @Res() res: Response,
   ) {
@@ -101,5 +101,27 @@ export class ChannelController {
     return res.status(HttpStatus.NO_CONTENT).json({
       message: 'Channel deleted successfully',
     });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, CheckChannelUser)
+  @Patch(':channelId/streamKey')
+  @ApiCreatedResponse({
+    status: 200,
+    description: 'Update channel stream key',
+    type: ChannelResponseEntity,
+  })
+  async updateStreamKey(
+    @Param('channelId') channelId: number,
+    @Res() res: Response,
+  ) {
+    try {
+      const data = await this.channelService.updateStreamKey(+channelId);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }
   }
 }
