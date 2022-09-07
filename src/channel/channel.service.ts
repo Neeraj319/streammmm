@@ -44,11 +44,6 @@ export class ChannelService {
       where: {
         id: channelId,
       },
-      select: {
-        id: true,
-        status: true,
-        userId: true,
-      },
     });
   }
 
@@ -91,5 +86,22 @@ export class ChannelService {
         streamKey: true,
       },
     });
+  }
+
+  async getLatestStream(streamKey: string) {
+    const channel = await this.prismaService.channel.findFirstOrThrow({
+      where: {
+        streamKey: streamKey,
+      },
+    });
+    const video = await this.prismaService.video.findFirst({
+      where: {
+        channelId: channel.id,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return video;
   }
 }
