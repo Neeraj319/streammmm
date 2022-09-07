@@ -29,6 +29,7 @@ services:
       - app
     volumes:
       - video_stream_data:/tmp/hls
+      - ./rtmp:/etc/nginx
 
 volumes:
   postgres_data:

@@ -138,7 +138,9 @@ export class ChannelController {
   ) {
     try {
       const data = await this.channelService.getLatestStream(streamKey);
-      return res.status(HttpStatus.OK).json(data);
+      return res
+        .status(HttpStatus.FOUND)
+        .redirect(`rtmp://0.0.0.0/hls-live/${data.url}`);
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
