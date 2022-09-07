@@ -124,4 +124,25 @@ export class ChannelController {
         .json({ message: error.message });
     }
   }
+
+  @ApiBearerAuth()
+  @Post('streamKey/verify')
+  @ApiCreatedResponse({
+    status: 302,
+    description: 'returns rtmp redirect url',
+    type: ChannelResponseEntity,
+  })
+  async verifyStreamKey(
+    @Body('streamKey') streamKey: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const data = await this.channelService.getLatestStream(streamKey);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }
+  }
 }

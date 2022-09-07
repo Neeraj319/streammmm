@@ -28,7 +28,7 @@ import { ChannelService } from './channel/channel.service';
         module: ChannelModule,
         children: [
           {
-            path: ':channelId:/videos',
+            path: ':channelId/videos',
             module: VideoModule,
           },
         ],

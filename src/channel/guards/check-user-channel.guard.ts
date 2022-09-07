@@ -19,7 +19,6 @@ export class CheckChannelUser implements CanActivate {
 
     const userChannel = await this.channelService.getChannelByUserId(+user.id);
     let channel: ChannelResponseEntity;
-    console.log('here');
     try {
       channel = await this.channelService.findOne(+channelId);
     } catch (e) {
