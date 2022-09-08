@@ -25,6 +25,12 @@ enum Status {
   IDLE
 }
 
+enum StreamStatus {
+  CREATED
+  RUNNING
+  ENDED
+}
+
 model Channel {
   id        Int     @id @default(autoincrement())
   status    Status  @default(IDLE)
@@ -35,9 +41,11 @@ model Channel {
 }
 
 model Video {
-  id        Int     @id @default(autoincrement())
-  url       String  @db.VarChar(20)
-  title     String  @db.VarChar(150)
-  channel   Channel @relation(fields: [channelId], references: [id])
+  id      Int          @id @default(autoincrement())
+  url     String       @db.VarChar(20)
+  title   String       @db.VarChar(150)
+  channel Channel      @relation(fields: [channelId], references: [id])
+  status  StreamStatus @default(CREATED)
+
   channelId Int
 }

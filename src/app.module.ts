@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -7,13 +7,10 @@ import { ChannelModule } from './channel/channel.module';
 import { VideoModule } from './video/video.module';
 import config from './config';
 import { RouterModule } from '@nestjs/core';
-import { VideoService } from './video/video.service';
-import { PrismaService } from './prisma/prisma.service';
-import { ChannelService } from './channel/channel.service';
 
 @Module({
   imports: [
-    AuthModule,
+    forwardRef(() => AuthModule),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
@@ -21,7 +18,6 @@ import { ChannelService } from './channel/channel.service';
     UserModule,
     ChannelModule,
     VideoModule,
-    ChannelModule,
     RouterModule.register([
       {
         path: 'channel/',
@@ -36,6 +32,6 @@ import { ChannelService } from './channel/channel.service';
     ]),
   ],
   controllers: [AppController],
-  providers: [VideoService, PrismaService, ChannelService],
+  providers: [],
 })
 export class AppModule {}

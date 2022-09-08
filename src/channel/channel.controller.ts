@@ -19,6 +19,7 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { Response } from 'express';
 import { ChannelResponseEntity } from './entities/channel.entity';
 import { CheckChannelUser } from './guards/check-user-channel.guard';
+import console from 'console';
 
 @ApiTags('channel')
 @Controller('')
@@ -141,6 +142,23 @@ export class ChannelController {
       return res
         .status(HttpStatus.FOUND)
         .redirect(`rtmp://0.0.0.0/hls-live/${data.url}`);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }
+  }
+
+  @Get('streamKey/end')
+  @ApiCreatedResponse({
+    status: 200,
+    description: 'End stream',
+  })
+  async endStream(@Res() res: Response, @Body('streamKey') streamKey: string) {
+    try {
+      console.log(streamKey);
+      // await this.channelService.endStream(streamKey);
+      return res.status(HttpStatus.OK).json({ message: 'Stream ended' });
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
