@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { ChannelController } from './channel.controller';
-import { JwtStrategy } from 'src/auth/stratigies/jwt.strategy';
-import { UserService } from 'src/user/user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthModule } from 'src/auth/auth.module';
+import { VideoModule } from 'src/video/video.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule, AuthModule, forwardRef(() => VideoModule)],
   controllers: [ChannelController],
-  providers: [ChannelService, PrismaService, JwtStrategy, UserService],
+  providers: [ChannelService],
+  exports: [ChannelService],
 })
 export class ChannelModule {}
