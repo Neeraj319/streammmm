@@ -6,7 +6,6 @@ import { randomStringGenerator } from '../utils/utils';
 import { ChannelResponseEntity } from './entities/channel.entity';
 import { StreamStatusEnum } from 'src/video/enums/video.enum';
 import { VideoService } from 'src/video/video.service';
-import { UpdateVideoDto } from 'src/video/dto/update-video.dto';
 
 @Injectable()
 export class ChannelService {
@@ -110,6 +109,12 @@ export class ChannelService {
         status: StreamStatusEnum.CREATED,
       },
     });
+    if (!video) {
+      video = await this.videoService.findLast();
+      video = await this.videoService.create(channel.id, {
+        title: video.title,
+      });
+    }
     await this.prismaService.video.update({
       where: {
         id: video.id,
@@ -120,18 +125,10 @@ export class ChannelService {
     });
     return video;
   }
-  async endStream(streamKey: string) {
-    const channel = await this.getChannelByStreamKey(streamKey);
-    const video = await this.prismaService.video.findFirst({
-      where: {
-        channelId: channel.id,
-        status: StreamStatusEnum.RUNNING,
-      },
-    });
-    const videoDto = new UpdateVideoDto({
+  async endStream(fileName: string) {
+    const video = await this.videoService.getVideoByFileName(fileName);
+    await this.videoService.update(video.id, {
       status: StreamStatusEnum.ENDED,
     });
-    await this.videoService.update(video.id, videoDto);
-    return video;
   }
 }

@@ -19,7 +19,6 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { Response } from 'express';
 import { ChannelResponseEntity } from './entities/channel.entity';
 import { CheckChannelUser } from './guards/check-user-channel.guard';
-import console from 'console';
 
 @ApiTags('channel')
 @Controller('')
@@ -149,17 +148,21 @@ export class ChannelController {
     }
   }
 
-  @Get('streamKey/end')
+  @Post('streamKey/end')
   @ApiCreatedResponse({
     status: 200,
     description: 'End stream',
   })
-  async endStream(@Res() res: Response, @Body('streamKey') streamKey: string) {
+  async endStream(
+    @Body('name') streamKey: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     try {
-      console.log(streamKey);
-      // await this.channelService.endStream(streamKey);
+      await this.channelService.endStream(streamKey);
       return res.status(HttpStatus.OK).json({ message: 'Stream ended' });
     } catch (error) {
+      console.log(error.message);
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: error.message });

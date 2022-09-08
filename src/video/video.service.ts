@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ChannelService } from 'src/channel/channel.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVideoDto } from './dto/create-video.dto';
@@ -9,6 +9,7 @@ import { randomStringGenerator } from '../utils/utils';
 export class VideoService {
   constructor(
     private readonly prismaSerivce: PrismaService,
+    @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
   ) {}
   async create(channelId: number, createVideoDto: CreateVideoDto) {
@@ -23,6 +24,13 @@ export class VideoService {
 
   async findAll() {
     return await this.prismaSerivce.video.findMany();
+  }
+  async findLast() {
+    return await this.prismaSerivce.video.findFirst({
+      orderBy: {
+        id: 'desc',
+      },
+    });
   }
 
   async findAllByChannel(channelId: number) {
@@ -50,6 +58,13 @@ export class VideoService {
       },
       data: {
         ...updateVideoDto,
+      },
+    });
+  }
+  async getVideoByFileName(fileName: string) {
+    return await this.prismaSerivce.video.findFirst({
+      where: {
+        url: fileName,
       },
     });
   }

@@ -72,7 +72,9 @@ export class VideoController {
     @Res() res: Response,
   ) {
     try {
-      return await this.videoService.update(+videoId, updateVideoDto);
+      return res
+        .status(HttpStatus.OK)
+        .json(await this.videoService.update(+videoId, updateVideoDto));
     } catch (error) {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: error.message,
