@@ -52,6 +52,11 @@ export class ChannelService {
       where: {
         id: channelId,
       },
+      select: {
+        id: true,
+        status: true,
+        userId: true,
+      },
     });
   }
 

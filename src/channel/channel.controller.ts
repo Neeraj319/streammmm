@@ -3,66 +3,27 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   HttpStatus,
-  UseGuards,
-  Req,
   Res,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ChannelService } from './channel.service';
-import { UpdateChannelDto } from './dto/update-channel.dto';
 import { Response } from 'express';
+import { ChannelService } from './channel.service';
 import { ChannelResponseEntity } from './entities/channel.entity';
-import { CheckChannelUser } from './guards/check-user-channel.guard';
-import { StreamKeyEntity } from 'src/video/enums/stream-key.entity';
 
 @ApiTags('channel')
 @Controller('')
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
-
-  @ApiCreatedResponse({
-    status: 201,
-    description: 'Channel has been successfully created.',
-    type: ChannelResponseEntity,
-  })
-  @ApiBearerAuth()
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBadRequestResponse({
-    status: 400,
-    description: 'User already has a channel',
-  })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'User not authorized',
-  })
-  async create(@Req() req: Request, @Res() res: Response) {
-    try {
-      const channel = await this.channelService.create(req.user.id);
-      return res.status(HttpStatus.CREATED).send(channel);
-    } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: error.message });
-    }
-  }
 
   @ApiOkResponse({
     status: 200,
@@ -93,88 +54,6 @@ export class ChannelController {
     }
   }
 
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @Patch(':channelId')
-  @ApiOkResponse({
-    status: 200,
-    description: 'Channel has been updated successfully.',
-    type: ChannelResponseEntity,
-  })
-  @ApiBadRequestResponse({
-    status: 400,
-    description: 'Request body is not valid',
-  })
-  @ApiForbiddenResponse({
-    description: 'User is not the owner of the channel',
-  })
-  @ApiNotFoundResponse({
-    description: 'Channel not found',
-  })
-  async update(
-    @Param('channelId') id: number,
-    @Body() updateChannelDto: UpdateChannelDto,
-    @Res() res: Response,
-  ) {
-    try {
-      return res
-        .status(HttpStatus.OK)
-        .json(await this.channelService.update(+id, updateChannelDto));
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
-    }
-  }
-
-  @ApiBearerAuth()
-  @Delete(':channelId')
-  @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @ApiResponse({
-    status: 204,
-    description: 'Channel has been deleted successfully.',
-  })
-  @ApiForbiddenResponse({
-    description: 'User is not the owner of the channel',
-  })
-  @ApiNotFoundResponse({
-    description: 'Channel not found',
-  })
-  async remove(@Param('channelId') channdelId: string, @Res() res: Response) {
-    await this.channelService.remove(+channdelId);
-    return res.status(HttpStatus.NO_CONTENT).json({
-      message: 'Channel deleted successfully',
-    });
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @Patch(':channelId/streamKey')
-  @ApiOkResponse({
-    status: 200,
-    description: 'Stream key updated successfully',
-    type: StreamKeyEntity,
-  })
-  @ApiForbiddenResponse({
-    description: 'User is not the owner of the channel',
-  })
-  @ApiNotFoundResponse({
-    status: 404,
-    description: 'Channel not found',
-  })
-  async updateStreamKey(
-    @Param('channelId') channelId: number,
-    @Res() res: Response,
-  ) {
-    try {
-      const data = await this.channelService.updateStreamKey(+channelId);
-      return res.status(HttpStatus.OK).json(data);
-    } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: error.message });
-    }
-  }
-
-  @ApiBearerAuth()
   @Post('streamKey/verify')
   @ApiOperation({
     description:
