@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async getUserByUsername(username: string): Promise<User> {
-    return await this.prisma.user.findFirst({
+    return await this.prisma.user.findUnique({
       where: {
         username: username,
       },
@@ -70,7 +70,6 @@ export class UserService {
       select: {
         username: true,
         id: true,
-        refreshToken: true,
         first_name: true,
         last_name: true,
       },
@@ -79,7 +78,7 @@ export class UserService {
   }
 
   async getUserByIdExcludePassword(id: number): Promise<UserResponseEntity> {
-    const data = await this.prisma.user.findUnique({
+    const data = await this.prisma.user.findFirstOrThrow({
       where: {
         id: id,
       },
@@ -97,22 +96,23 @@ export class UserService {
     userId: number,
     userDto: UpdateUserDto,
   ): Promise<UserResponseEntity> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        username: userDto.username,
-      },
-    });
+    const user = await this.getUserByUsername(userDto.username);
     if (user) {
       throw new Error('Username already exists');
     }
-    await this.prisma.user.update({
+    return await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
         ...userDto,
       },
+      select: {
+        username: true,
+        id: true,
+        first_name: true,
+        last_name: true,
+      },
     });
-    return await this.getUserByIdExcludePassword(userId);
   }
 }
