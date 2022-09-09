@@ -28,11 +28,19 @@ export class UserService {
       },
     });
   }
-  async addUser(user: CreateUserDto) {
+  async addUser(user: CreateUserDto): Promise<UserResponseEntity> {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     try {
-      await this.prisma.user.create({ data: { ...user } });
+      return await this.prisma.user.create({
+        data: { ...user },
+        select: {
+          username: true,
+          id: true,
+          first_name: true,
+          last_name: true,
+        },
+      });
     } catch (e) {
       new ErrorHandler(e)
         .checkInstance()

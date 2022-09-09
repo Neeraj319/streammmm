@@ -1,10 +1,16 @@
 import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
+import { UserResponseEntity } from 'src/user/entities/user-response.entity';
+import { TokensEntity } from './entities/tokens.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -14,16 +20,16 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: 'User has been successfully created.',
+    type: UserResponseEntity,
   })
-  async createUser(
-    @Res() res: Response,
-    @Body() userDto: CreateUserDto,
-  ): Promise<object> {
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Invalid fields or user already exists.',
+  })
+  async createUser(@Res() res: Response, @Body() userDto: CreateUserDto) {
     try {
-      await this.authService.addUser(userDto);
-      return res.set(HttpStatus.CREATED).json({
-        message: 'user created successfully',
-      });
+      const user = await this.authService.addUser(userDto);
+      return res.set(HttpStatus.CREATED).json(user);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,
@@ -35,11 +41,13 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: 'Access and Refresh token generated successfully',
+    type: TokensEntity,
   })
-  async loginUser(
-    @Res() res: Response,
-    @Body() userDto: LoginUserDto,
-  ): Promise<Response> {
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Invalid username and password',
+  })
+  async loginUser(@Res() res: Response, @Body() userDto: LoginUserDto) {
     try {
       const { accessToken, refreshToken } = await this.authService.genToken(
         userDto.username,
@@ -59,6 +67,11 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: 'Access and Refresh token generated successfully',
+    type: TokensEntity,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Invalid refresh token',
   })
   async getRefreshToken(
     @Body() refreshTokenDto: RefreshTokenDto,
