@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UserResponseEntity } from 'src/user/entities/user-response.entity';
 import { UserService } from 'src/user/user.service';
+import { RefreshTokenPayload } from '../entities/refreshToken.entity';
+import { TokensEntity } from '../entities/tokens.entity';
 import { TokenService } from './token.service';
 
 @Injectable()
@@ -11,10 +14,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async genToken(
-    username: string,
-    password: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async genToken(username: string, password: string): Promise<TokensEntity> {
     let user: User;
     let refreshToken: string;
     user = await this.userService.authenticateUser(username, password);
@@ -29,8 +29,10 @@ export class AuthService {
       refreshToken,
     };
   }
-  async genTokenByRefreshToken(refreshToken: string) {
-    const result = await this.tokenService.decodeToken(refreshToken);
+  async genTokenByRefreshToken(refreshToken: string): Promise<TokensEntity> {
+    const result = await this.tokenService.decodeToken<RefreshTokenPayload>(
+      refreshToken,
+    );
     const user = await this.userService.getUserById(result.userId);
     if (user.refreshToken !== refreshToken) {
       throw new Error('Invalid refresh token');
@@ -44,7 +46,7 @@ export class AuthService {
     };
   }
 
-  async addUser(user: CreateUserDto) {
-    await this.userService.addUser(user);
+  async addUser(user: CreateUserDto): Promise<UserResponseEntity> {
+    return await this.userService.addUser(user);
   }
 }
