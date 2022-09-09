@@ -7,17 +7,24 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
   Res,
   HttpStatus,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CheckChannelUser } from 'src/channel/guards/check-user-channel.guard';
+import { VideoEntity } from './entities/video.entity';
 
 @Controller('')
 @ApiTags('channel-videos')
@@ -26,9 +33,29 @@ export class VideoController {
 
   @Post('')
   @UseGuards(JwtAuthGuard, CheckChannelUser)
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'Video/Stream created successfully',
+    type: VideoEntity,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Invalid Request body',
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Channel not found',
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'User is not logged in',
+  })
   async create(
     @Body() createVideoDto: CreateVideoDto,
-    @Req() req: Request,
     @Param('channelId') channelId: number,
     @Res() res: Response,
   ) {
@@ -37,6 +64,15 @@ export class VideoController {
   }
 
   @Get()
+  @ApiOkResponse({
+    status: 200,
+    description: 'All the videos of the channel',
+    type: [VideoEntity],
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Channel not found',
+  })
   async findAll(@Param('channelId') channelId: number, @Res() res: Response) {
     try {
       return res
@@ -50,6 +86,15 @@ export class VideoController {
   }
 
   @Get(':videoId')
+  @ApiOkResponse({
+    status: 200,
+    description: 'Video found',
+    type: VideoEntity,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Video/Channel not found',
+  })
   async findOne(
     @Param('videoId') videoId: string,
     @Param('channelId') channelId: number,
@@ -65,6 +110,23 @@ export class VideoController {
   }
 
   @Patch(':videoId')
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Invalid Request body',
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Video/Channel not found',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Video updated successfully',
+    type: VideoEntity,
+  })
   @UseGuards(JwtAuthGuard, CheckChannelUser)
   async update(
     @Param('videoId') videoId: number,
@@ -82,6 +144,18 @@ export class VideoController {
     }
   }
   @Delete(':videoId')
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Video/Channel not found',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Video Deleted successfully',
+  })
   async remove(@Param('videoId') videoId: number, @Res() res: Response) {
     try {
       await this.videoService.remove(+videoId);
