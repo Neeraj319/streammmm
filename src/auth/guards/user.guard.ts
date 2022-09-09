@@ -1,5 +1,4 @@
 import { ExecutionContext, Injectable, CanActivate } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
 import { Request } from 'express';
 
 @Injectable()
