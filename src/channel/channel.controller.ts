@@ -11,7 +11,18 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ChannelService } from './channel.service';
@@ -19,6 +30,7 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { Response } from 'express';
 import { ChannelResponseEntity } from './entities/channel.entity';
 import { CheckChannelUser } from './guards/check-user-channel.guard';
+import { StreamKeyEntity } from 'src/video/enums/stream-key.entity';
 
 @ApiTags('channel')
 @Controller('')
@@ -28,10 +40,19 @@ export class ChannelController {
   @ApiCreatedResponse({
     status: 201,
     description: 'Channel has been successfully created.',
+    type: ChannelResponseEntity,
   })
   @ApiBearerAuth()
   @Post()
   @UseGuards(JwtAuthGuard)
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'User already has a channel',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'User not authorized',
+  })
   async create(@Req() req: Request, @Res() res: Response) {
     try {
       const channel = await this.channelService.create(req.user.id);
@@ -42,9 +63,10 @@ export class ChannelController {
         .json({ message: error.message });
     }
   }
-  @ApiCreatedResponse({
+
+  @ApiOkResponse({
     status: 200,
-    description: 'Retrieve all channels from the database',
+    description: 'Get all the channels from the database',
     type: [ChannelResponseEntity],
   })
   @Get()
@@ -52,10 +74,14 @@ export class ChannelController {
     return await this.channelService.findAll();
   }
 
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Retrieve channel with id',
     type: ChannelResponseEntity,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Channel with that id not found',
   })
   @Get(':channelId')
   async findOne(@Param('channelId') channelId: number, @Res() res: Response) {
@@ -66,13 +92,24 @@ export class ChannelController {
       return res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
     }
   }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, CheckChannelUser)
   @Patch(':channelId')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Channel has been updated successfully.',
     type: ChannelResponseEntity,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Request body is not valid',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    description: 'Channel not found',
   })
   async update(
     @Param('channelId') id: number,
@@ -91,10 +128,15 @@ export class ChannelController {
   @ApiBearerAuth()
   @Delete(':channelId')
   @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @ApiCreatedResponse({
+  @ApiResponse({
     status: 204,
     description: 'Channel has been deleted successfully.',
-    type: ChannelResponseEntity,
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    description: 'Channel not found',
   })
   async remove(@Param('channelId') channdelId: string, @Res() res: Response) {
     await this.channelService.remove(+channdelId);
@@ -106,10 +148,17 @@ export class ChannelController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, CheckChannelUser)
   @Patch(':channelId/streamKey')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     status: 200,
-    description: 'Update channel stream key',
-    type: ChannelResponseEntity,
+    description: 'Stream key updated successfully',
+    type: StreamKeyEntity,
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not the owner of the channel',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Channel not found',
   })
   async updateStreamKey(
     @Param('channelId') channelId: number,
@@ -127,10 +176,21 @@ export class ChannelController {
 
   @ApiBearerAuth()
   @Post('streamKey/verify')
+  @ApiOperation({
+    description:
+      'this route is only to be used by rtmp server to verify stream key',
+  })
   @ApiCreatedResponse({
+    status: 201,
+    description: "Don't expect this response",
+  })
+  @ApiResponse({
     status: 302,
     description: 'returns rtmp redirect url',
-    type: ChannelResponseEntity,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Stream key is not valid',
   })
   async verifyStreamKey(
     @Body('streamKey') streamKey: string,
@@ -149,23 +209,28 @@ export class ChannelController {
   }
 
   @Post('streamKey/end')
-  @ApiCreatedResponse({
-    status: 200,
-    description: 'End stream',
+  @ApiOperation({
+    description:
+      'this route ends the particular video stream also only to be used by rtmp server',
   })
-  async endStream(
-    @Body('name') streamKey: string,
-    @Res() res: Response,
-    @Req() req: Request,
-  ) {
+  @ApiResponse({
+    status: 200,
+    description: 'Stream ended successfully',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Video not found',
+  })
+  @ApiCreatedResponse({
+    status: 201,
+    description: "Don't expect this response",
+  })
+  async endStream(@Body('name') streamKey: string, @Res() res: Response) {
     try {
       await this.channelService.endStream(streamKey);
       return res.status(HttpStatus.OK).json({ message: 'Stream ended' });
     } catch (error) {
-      console.log(error.message);
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: error.message });
+      return res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
     }
   }
 }

@@ -6,6 +6,8 @@ import { randomStringGenerator } from '../utils/utils';
 import { ChannelResponseEntity } from './entities/channel.entity';
 import { StreamStatusEnum } from 'src/video/enums/video.enum';
 import { VideoService } from 'src/video/video.service';
+import { StreamKeyEntity } from 'src/video/enums/stream-key.entity';
+import { VideoEntity } from 'src/video/entities/video.entity';
 
 @Injectable()
 export class ChannelService {
@@ -72,15 +74,15 @@ export class ChannelService {
     });
   }
 
-  remove(channelId: number) {
-    return this.prismaService.channel.delete({
+  async remove(channelId: number) {
+    await this.prismaService.channel.delete({
       where: {
         id: channelId,
       },
     });
   }
 
-  updateStreamKey(channelId: number) {
+  async updateStreamKey(channelId: number): Promise<StreamKeyEntity> {
     return this.prismaService.channel.update({
       where: {
         id: channelId,
@@ -93,7 +95,7 @@ export class ChannelService {
       },
     });
   }
-  async getChannelByStreamKey(streamKey: string) {
+  async getChannelByStreamKey(streamKey: string): Promise<Channel> {
     return await this.prismaService.channel.findFirstOrThrow({
       where: {
         streamKey: streamKey,
@@ -101,7 +103,7 @@ export class ChannelService {
     });
   }
 
-  async getLatestStream(streamKey: string) {
+  async getLatestStream(streamKey: string): Promise<VideoEntity> {
     const channel = await this.getChannelByStreamKey(streamKey);
     let video = await this.prismaService.video.findFirst({
       where: {
