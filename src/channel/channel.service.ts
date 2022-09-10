@@ -134,7 +134,7 @@ export class ChannelService {
   }
   async endStream(fileName: string) {
     const video = await this.videoService.getVideoByFileName(fileName);
-    await this.videoService.update(video.id, {
+    await this.videoService.updateVideoStatus(video.id, {
       status: StreamStatusEnum.ENDED,
     });
   }

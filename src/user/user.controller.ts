@@ -26,7 +26,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CheckUserGuard } from 'src/auth/guards/user.guard';
 
 @ApiTags('user')
-@Controller('user')
+@Controller('')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

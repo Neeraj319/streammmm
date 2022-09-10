@@ -31,7 +31,7 @@ import { StreamKeyEntity } from 'src/video/enums/stream-key.entity';
 import { User as UserDecorator } from 'src/user/decoratos/request-user.decorator';
 import { UserEnity } from 'src/user/entities/user.entity';
 
-@ApiTags('user-channel')
+@ApiTags('User Channel')
 @Controller('')
 export class UserChannelController {
   constructor(private readonly channelService: ChannelService) {}
