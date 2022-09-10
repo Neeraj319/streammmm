@@ -7,6 +7,8 @@ import { ChannelModule } from './channel/channel.module';
 import { VideoModule } from './video/video.module';
 import config from './config';
 import { RouterModule } from '@nestjs/core';
+import { UserChannelModule } from './channel/user-channel/user-channel.module';
+import { UserChannelVideosModule } from './video/user-channel-videos/user-channel-videos.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { RouterModule } from '@nestjs/core';
     UserModule,
     ChannelModule,
     VideoModule,
+    UserChannelModule,
+    UserChannelVideosModule,
     RouterModule.register([
       {
         path: 'channel/',
@@ -26,6 +30,22 @@ import { RouterModule } from '@nestjs/core';
           {
             path: ':channelId/videos',
             module: VideoModule,
+          },
+        ],
+      },
+      {
+        path: 'user/',
+        module: UserModule,
+        children: [
+          {
+            path: 'channel/',
+            module: UserChannelModule,
+            children: [
+              {
+                path: 'videos/',
+                module: UserChannelVideosModule,
+              },
+            ],
           },
         ],
       },

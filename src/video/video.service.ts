@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
 import { randomStringGenerator } from '../utils/utils';
+import { time } from 'console';
 
 @Injectable()
 export class VideoService {
@@ -51,7 +52,28 @@ export class VideoService {
     });
   }
 
-  async update(videoId: number, updateVideoDto: UpdateVideoDto) {
+  async update(
+    videoId: number,
+    updateVideoDto: UpdateVideoDto,
+    channelId: number,
+  ) {
+    await this.prismaSerivce.video.updateMany({
+      where: {
+        id: +videoId,
+        channelId: +channelId,
+      },
+      data: {
+        ...updateVideoDto,
+      },
+    });
+    return await this.prismaSerivce.video.findMany({
+      where: {
+        id: +videoId,
+        channelId: +channelId,
+      },
+    });
+  }
+  async updateVideoStatus(videoId: number, updateVideoDto: UpdateVideoDto) {
     return await this.prismaSerivce.video.update({
       where: {
         id: +videoId,
@@ -69,15 +91,12 @@ export class VideoService {
     });
   }
 
-  async remove(id: number) {
-    try {
-      return await this.prismaSerivce.video.delete({
-        where: {
-          id: +id,
-        },
-      });
-    } catch (e) {
-      throw new Error('Video not found');
-    }
+  async remove(id: number, channelId: number) {
+    return await this.prismaSerivce.video.deleteMany({
+      where: {
+        id: +id,
+        channelId: channelId,
+      },
+    });
   }
 }

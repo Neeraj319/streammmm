@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ChannelService } from '../channel.service';
-import { ChannelResponseEntity } from '../entities/channel.entity';
+import { ChannelEntity } from '../entities/channel.entity';
 
 @Injectable()
 export class CheckChannelUser implements CanActivate {
@@ -15,22 +15,11 @@ export class CheckChannelUser implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const { user } = request;
-    const { channelId } = request.params;
-
     const userChannel = await this.channelService.getChannelByUserId(+user.id);
-    let channel: ChannelResponseEntity;
-    try {
-      channel = await this.channelService.findOne(+channelId);
-    } catch (e) {
-      throw new NotFoundException('Channel not found');
+    if (!userChannel) {
+      throw new NotFoundException('User does not have a channel');
     }
-
-    if (!channel) {
-      throw new NotFoundException('Channel not found');
-    }
-    if (userChannel.id !== +channelId) {
-      return false;
-    }
+    request.user.channel = userChannel as ChannelEntity;
     return true;
   }
 }
