@@ -8,7 +8,7 @@ COPY package*.json /app/
 COPY yarn.lock /app/
 COPY prisma /app/prisma/
 
-RUN yarn install
+# RUN yarn install
 
 COPY . /app/
 

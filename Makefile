@@ -4,7 +4,7 @@ DOCKER_COMPOSE_RUN := $(DOCKER_COMPOSE) run --rm --entrypoint=/bin/sh app -c
 
 build:
 	[ -d "./node_modules/" ] || yarn install
-	docker-compose up --build
+	docker-compose up --build -d 
 
 generate_prisma:
 	@$(DOCKER_COMPOSE_RUN) "npx prisma generate"
