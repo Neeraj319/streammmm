@@ -55,6 +55,10 @@ sudo nginx -s reload
 yarn start:dev
 ```
 
+
+# Architecture 
+![alt text](images/streammm_system_architecture%20.svg)
+
 ## Using the API
 
 - go to http://localhost:nest_js_port:/docs to view the documentation of the API
@@ -87,7 +91,7 @@ yarn start:dev
 
 - go to https://hls-js.netlify.app/demo/ 
 
-- hls stream url: `rtmp://localhost:1935/streaming` 
+- hls stream url: `http://localhost:8080/hls/generate_stream_file_name.m3u8` 
 
 - Change the last url parameter to your stream/videos's file name provided by the api
 
