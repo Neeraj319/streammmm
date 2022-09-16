@@ -42,7 +42,7 @@ export class VideoController {
     description: 'Video/Channel not found',
   })
   async findOne(
-    @Param('videoId') videoId: string,
+    @Param('videoId') videoId: number,
     @Param('channelId') channelId: number,
     @Res() res: Response,
   ) {

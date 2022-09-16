@@ -108,12 +108,14 @@ export class UserChannelVideosController {
   })
   @ApiBearerAuth()
   async findOne(
-    @Param('videoId') videoId: string,
+    @Param('videoId') videoId: number,
     @Res() res: Response,
     @UserDecorator() user: UserEnity,
   ) {
     try {
-      return await this.videoService.findOne(user.channel.id, +videoId);
+      return res
+        .status(HttpStatus.OK)
+        .json(await this.videoService.findOne(user.channel.id, +videoId));
     } catch (error) {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: error.message,
