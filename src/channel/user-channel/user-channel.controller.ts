@@ -13,9 +13,9 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -64,8 +64,8 @@ export class UserChannelController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @Patch('')
+  @UseGuards(JwtAuthGuard)
+  @Patch()
   @ApiOkResponse({
     status: 200,
     description: 'Channel has been updated successfully.',
@@ -74,9 +74,6 @@ export class UserChannelController {
   @ApiBadRequestResponse({
     status: 400,
     description: 'Request body is not valid',
-  })
-  @ApiForbiddenResponse({
-    description: 'User is not the owner of the channel',
   })
   @ApiNotFoundResponse({
     description: 'Channel not found',
@@ -91,12 +88,13 @@ export class UserChannelController {
         .status(HttpStatus.OK)
         .json(await this.channelService.update(user.id, updateChannelDto));
     } catch (e) {
+      console.log('here');
       return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
 
   @ApiBearerAuth()
-  @Delete('')
+  @Delete()
   @UseGuards(JwtAuthGuard, CheckChannelUser)
   @ApiResponse({
     status: 204,
@@ -148,18 +146,17 @@ export class UserChannelController {
     description: "Get user's channel",
     type: ChannelResponseEntity,
   })
+  @ApiOperation({
+    description: 'returns the channel of user',
+  })
   @ApiNotFoundResponse({
     status: 404,
     description: 'User has no channel',
   })
   @UseGuards(JwtAuthGuard, CheckChannelUser)
-  @Get('')
+  @Get()
   async findOne(@Res() res: Response, @UserDecorator() user: UserEnity) {
-    try {
-      const data = await this.channelService.getChannelByUserId(user.id);
-      return res.status(HttpStatus.OK).json(data);
-    } catch (error) {
-      return res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
-    }
+    console.log("returning current user's channel");
+    return res.status(HttpStatus.OK).json(user.channel);
   }
 }
