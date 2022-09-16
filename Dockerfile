@@ -8,12 +8,9 @@ COPY package*.json /app/
 COPY yarn.lock /app/
 COPY prisma /app/prisma/
 
-# RUN yarn install
 
 COPY . /app/
 
 RUN yarn global add @nestjs/cli
-RUN npx prisma generate
-RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
