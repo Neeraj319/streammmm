@@ -10,6 +10,7 @@ import { RouterModule } from '@nestjs/core';
 import { UserChannelModule } from './channel/user-channel/user-channel.module';
 import { UserChannelVideosModule } from './video/user-channel-videos/user-channel-videos.module';
 import { UserAuthenticatedModule } from './user/user-authenticated/user-authenticated.module';
+import { ProfilePictureModule } from './user/profile-picture/profile-picture.module';
 
 @Module({
   imports: [
@@ -49,9 +50,14 @@ import { UserAuthenticatedModule } from './user/user-authenticated/user-authenti
               },
             ],
           },
+          {
+            path: 'profile-picture',
+            module: ProfilePictureModule,
+          },
         ],
       },
     ]),
+    ProfilePictureModule,
   ],
   controllers: [AppController],
   providers: [],
