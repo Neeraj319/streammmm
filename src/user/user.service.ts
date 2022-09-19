@@ -80,6 +80,7 @@ export class UserService {
         id: true,
         first_name: true,
         last_name: true,
+        profile_picture: true,
       },
     });
     return data;
@@ -95,6 +96,7 @@ export class UserService {
         id: true,
         first_name: true,
         last_name: true,
+        profile_picture: true,
       },
     });
     return data;
