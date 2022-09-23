@@ -11,15 +11,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=app_db
     env_file: .env
-  app:
-    build: .
-    volumes:
-      - .:/app
-    ports:
-      - '8000:3000'
-    depends_on:
-      - db
-    env_file: .env
+
   rtmp:
     build: ./rtmp/
     ports:
@@ -31,6 +23,41 @@ services:
       - video_stream_data:/tmp/hls
       - ./rtmp:/etc/nginx
 
+  rabbitmq_:
+    image: rabbitmq:3-management-alpine
+    container_name: broker_rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:15672']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  worker:
+    build: ./worker
+    volumes:
+      - ./worker/:/worker
+      - image_uploads:/worker/uploads
+    depends_on:
+      - rabbitmq_
+    env_file: .env
+
+  app:
+    build: .
+    volumes:
+      - .:/app
+      - image_uploads:/app/uploads
+    ports:
+      - '8000:3000'
+    depends_on:
+      - db
+      - rabbitmq_
+      - worker
+    env_file: .env
+
 volumes:
   postgres_data:
   video_stream_data:
+  image_uploads:

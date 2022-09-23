@@ -8,7 +8,6 @@ COPY package*.json /app/
 COPY yarn.lock /app/
 COPY prisma /app/prisma/
 
-
 COPY . /app/
 
 RUN yarn global add @nestjs/cli

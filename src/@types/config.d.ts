@@ -8,7 +8,16 @@ interface IJwtConfig {
   refreshExpiresIn: number;
 }
 
+interface IRabbitMqConfig {
+  hostname: string;
+  username: string;
+  password: string;
+  queue: string;
+  port: number;
+}
+
 interface IConfig {
   jwt: IJwtConfig;
   server: ServerConfig;
+  rabbitMq: IRabbitMqConfig;
 }
