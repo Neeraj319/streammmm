@@ -11,6 +11,7 @@ import { UserChannelModule } from './channel/user-channel/user-channel.module';
 import { UserChannelVideosModule } from './video/user-channel-videos/user-channel-videos.module';
 import { UserAuthenticatedModule } from './user/user-authenticated/user-authenticated.module';
 import { ProfilePictureModule } from './user/profile-picture/profile-picture.module';
+import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ProfilePictureModule } from './user/profile-picture/profile-picture.mod
       },
     ]),
     ProfilePictureModule,
+    RabbitmqModule,
   ],
   controllers: [AppController],
   providers: [],

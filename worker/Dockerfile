@@ -4,10 +4,10 @@ ENV PYTHONUNBUFFERED=1
 
 RUN pip install Pillow celery
 
-WORKDIR /app
+WORKDIR /worker
 
-COPY . /app
+COPY . /worker
 
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /worker/entrypoint.sh
 
-ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+ENTRYPOINT ["sh", "/worker/entrypoint.sh"]
