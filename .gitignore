@@ -35,7 +35,7 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 # Created by https://www.gitignore.io
-
+**/__pycache__/
 ### OSX ###
 .DS_Store
 .AppleDouble
