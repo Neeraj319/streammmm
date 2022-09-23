@@ -45,9 +45,9 @@ services:
     env_file: .env
 
   app:
-    build: .
+    build: ./REST
     volumes:
-      - .:/app
+      - ./REST/:/app
       - image_uploads:/app/uploads
     ports:
       - '8000:3000'
