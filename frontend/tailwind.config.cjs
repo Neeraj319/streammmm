@@ -4,5 +4,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require("flowbite/plugin"),
+    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+  ],
+  darkMode: "class",
 };
