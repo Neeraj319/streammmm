@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "docker": "docker-compose -f docker-compose.dev.yaml up",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
