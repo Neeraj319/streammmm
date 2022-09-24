@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   db:
     image: postgres:13-alpine
@@ -15,8 +15,8 @@ services:
   rtmp:
     build: ./rtmp/
     ports:
-      - '1935:1935'
-      - '8080:8080'
+      - "1935:1935"
+      - "8080:8080"
     depends_on:
       - app
     volumes:
@@ -30,7 +30,7 @@ services:
       - 5672:5672
       - 15672:15672
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:15672']
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -50,12 +50,19 @@ services:
       - ./REST/:/app
       - image_uploads:/app/uploads
     ports:
-      - '8000:3000'
+      - "8000:3000"
     depends_on:
       - db
       - rabbitmq_
       - worker
     env_file: .env
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/app/src
+    ports:
+      - 3000:3000
 
 volumes:
   postgres_data:
