@@ -1,6 +1,24 @@
+import { useEffect } from "react";
+import { axiosInstance } from "../axios.config";
 export const Login = () => {
+  useEffect(() => {
+    async function get() {
+      try {
+        const response = await axiosInstance.get("");
+
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    get();
+  }, []);
   return (
+<<<<<<< Updated upstream
     <div className="flex items-center m-44 p-4 bg-black-100 lg:justify-center">
+=======
+    <div className="flex items-center m-44 bg-black-100 lg:justify-center">
+>>>>>>> Stashed changes
       <div className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md">
         <div className="p-4 py-6 text-white bg-blue-500 md:w-80 md:flex-shrink-0 md:flex md:flex-col md:items-center md:justify-evenly">
           <div className="my-3 text-4xl font-bold tracking-wider text-center">
