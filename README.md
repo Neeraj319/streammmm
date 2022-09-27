@@ -109,4 +109,4 @@ Contributions are always welcome!
 
 See `contributing.md` for ways to get started.
 
-Please adhere to this project's [code_of_conduct.md](https://github.com/Neeraj319/streammmm/blob/main/code_of_conduct.md).
+Please adhere to this project's [code_of_conduct.md](https://github.com/Neeraj319/streammmm/blob/master/code_of_conduct.md).
