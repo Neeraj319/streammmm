@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { VideoEntity } from './video/entities/video.entity';
 import { VideoService } from './video/video.service';
 
@@ -18,7 +19,8 @@ export class AppController {
     description: 'returns all the videos',
     type: [VideoEntity],
   })
-  async findAll() {
+  async findAll(@Req() req: Request) {
+    console.log(req.headers);
     return await this.videoService.findAll();
   }
 }

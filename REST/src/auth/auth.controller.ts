@@ -11,6 +11,7 @@ import { LoginUserDto } from './dto/loginUser.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserResponseEntity } from 'src/user/entities/user-response.entity';
 import { TokensEntity } from './entities/tokens.entity';
+import { Cookies } from './decorators/auth.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -47,16 +48,29 @@ export class AuthController {
     status: 400,
     description: 'Invalid username and password',
   })
-  async loginUser(@Res() res: Response, @Body() userDto: LoginUserDto) {
+  async loginUser(
+    @Res({ passthrough: true }) res: Response,
+    @Body() userDto: LoginUserDto,
+  ) {
     try {
       const { accessToken, refreshToken } = await this.authService.genToken(
         userDto.username,
         userDto.password,
       );
-      return res.status(201).json({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      });
+      return res
+        .cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          maxAge: 604800 * 1000,
+        })
+        .cookie('accessToken', accessToken, {
+          httpOnly: true,
+          maxAge: 1200 * 1000,
+        })
+        .status(201)
+        .json({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,
@@ -74,15 +88,28 @@ export class AuthController {
     description: 'Invalid refresh token',
   })
   async getRefreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Cookies('refreshToken') refreshTokenDto: RefreshTokenDto,
     @Res() res: Response,
   ) {
     try {
-      return res.send(
+      const { accessToken, refreshToken } =
         await this.authService.genTokenByRefreshToken(
           refreshTokenDto.refreshToken,
-        ),
-      );
+        );
+      return res
+        .cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          maxAge: 604800 * 1000,
+        })
+        .cookie('accessToken', accessToken, {
+          httpOnly: true,
+          maxAge: 1200 * 1000,
+        })
+        .status(201)
+        .json({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,
