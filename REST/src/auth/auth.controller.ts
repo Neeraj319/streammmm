@@ -57,7 +57,8 @@ export class AuthController {
         userDto.username,
         userDto.password,
       );
-      return res
+
+      res
         .cookie('refreshToken', refreshToken, {
           httpOnly: true,
           maxAge: 604800 * 1000,
@@ -72,7 +73,7 @@ export class AuthController {
           refreshToken: refreshToken,
         });
     } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
+      res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,
       });
     }
@@ -96,7 +97,7 @@ export class AuthController {
         await this.authService.genTokenByRefreshToken(
           refreshTokenDto.refreshToken,
         );
-      return res
+      res
         .cookie('refreshToken', refreshToken, {
           httpOnly: true,
           maxAge: 604800 * 1000,
@@ -111,7 +112,7 @@ export class AuthController {
           refreshToken: refreshToken,
         });
     } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
+      res.status(HttpStatus.BAD_REQUEST).json({
         message: e.message,
       });
     }
