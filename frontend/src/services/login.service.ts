@@ -1,6 +1,6 @@
 import { axiosInstance } from "../axios.config";
-import { useNavigate } from "react-router-dom";
-
+import { AuthErrorResponseInterface } from "../interfaces/auth-response.interface";
+import request from "axios";
 export const loginUser = async (username: string, password: string) => {
   try {
     await axiosInstance.post("/auth/login", {
@@ -8,9 +8,10 @@ export const loginUser = async (username: string, password: string) => {
       password: password,
     });
     alert("login success");
-    // const navigate = useNavigate();
-    // navigate("/");
+    return true;
   } catch (error) {
-    alert("invalid username or password");
+    if (request.isAxiosError(error)) {
+      alert((error.response?.data as AuthErrorResponseInterface).message);
+    }
   }
 };
