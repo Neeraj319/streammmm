@@ -1,27 +1,30 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { loginUser } from "../../services/login.service";
-import { FormInputValues } from "./login-from.interface";
+import { LoginFormInputValues } from "./login-from.interface";
 import { PasswordInput, UsernameInput } from "./LoginInputs";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
+import { useNavigate } from "react-router";
 const schema = yup.object({
-  username: yup.string().required("Username is required"),
-  password: yup.string().required("Password is required"),
+  username: yup.string().max(20).min(3).required("Username is required"),
+  password: yup.string().max(46).min(8).required("Password is required"),
 });
 
 export const LoginForm = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormInputValues>({
+  } = useForm<LoginFormInputValues>({
     resolver: yupResolver(schema),
   });
-  const onSubmit: SubmitHandler<FormInputValues> = async (
-    data: FormInputValues
+  const onSubmit: SubmitHandler<LoginFormInputValues> = async (
+    data: LoginFormInputValues
   ) => {
-    await loginUser(data.username, data.password);
+    if (await loginUser(data.username, data.password)) {
+      navigate("/");
+    }
   };
 
   return (

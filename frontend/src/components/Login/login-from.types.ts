@@ -1,14 +1,11 @@
 import { Path, UseFormRegister } from "react-hook-form";
-import { FormInputValues } from "./login-from.interface";
+import { LoginFormInputValues } from "./login-from.interface";
 
-export type UsernameInputProps = {
-  label: Path<FormInputValues>;
-  register: UseFormRegister<FormInputValues>;
+export type InputProps = {
+  label: Path<LoginFormInputValues>;
+  register: UseFormRegister<LoginFormInputValues>;
   required: boolean;
 };
+export type UsernameInputProps = InputProps;
 
-export type PasswordInputProps = {
-  label: Path<FormInputValues>;
-  register: UseFormRegister<FormInputValues>;
-  required: boolean;
-};
+export type PasswordInputProps = InputProps;
