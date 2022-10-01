@@ -1,4 +1,3 @@
-
 # Contributing to Streammmm
 
 First off, thanks for taking the time to contribute! ❤️
@@ -12,18 +11,22 @@ All types of contributions are encouraged and valued.
 > - Mention the project at local meetups and tell your friends/colleagues
 
 ## Setup
+
 - clone the github repo
+
 ```bash
 https://github.com/Neeraj319/streammmm
 ```
+
 ```
 cd streammmm
 ```
+
 ```
-make up 
+make up
 ```
 
-If you want to make changes the rest api then edit files in the REST folder. 
+If you want to make changes the rest api then edit files in the REST folder.
 
 If you want to make changes in the frontend then edit files in the frontend folder.
 

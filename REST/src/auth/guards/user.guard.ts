@@ -3,7 +3,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class CheckUserGuard implements CanActivate {
-  constructor() { }
+  constructor() {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
