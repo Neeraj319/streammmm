@@ -4,14 +4,12 @@ import { LoginFormInputValues } from "./login-from.interface";
 import { PasswordInput, UsernameInput } from "./LoginInputs";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate } from "react-router";
 const schema = yup.object({
   username: yup.string().max(20).min(3).required("Username is required"),
   password: yup.string().max(46).min(8).required("Password is required"),
 });
 
 export const LoginForm = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -23,7 +21,7 @@ export const LoginForm = () => {
     data: LoginFormInputValues
   ) => {
     if (await loginUser(data.username, data.password)) {
-      navigate("/");
+      window.location.href = "/";
     }
   };
 

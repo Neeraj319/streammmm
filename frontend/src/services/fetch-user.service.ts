@@ -6,7 +6,7 @@ import { ErrorAuthResponseInterface } from "../interfaces/error-response.interfa
 const loginUserRefreshToken = async () => {
   try {
     await axiosInstance.post("/auth/refresh");
-    return true;
+    return await fetchUser();
   } catch (error) {
     if (request.isAxiosError(error)) {
       const errorResponse = error.response?.data as ErrorAuthResponseInterface;
@@ -24,9 +24,7 @@ const loginUserRefreshToken = async () => {
 export const fetchUser = async (): Promise<User | boolean> => {
   try {
     const response = await axiosInstance.get("/user");
-    console.log(response);
-    const user: User = response.data;
-    return user;
+    return response.data as User;
   } catch (error) {
     if (request.isAxiosError(error)) {
       const errorResponse = error.response?.data as ErrorAuthResponseInterface;
