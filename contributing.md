@@ -10,24 +10,17 @@ All types of contributions are encouraged and valued.
 > - Refer this project in your project's readme
 > - Mention the project at local meetups and tell your friends/colleagues
 
-## Setup
+### Configuration 
 
-- clone the github repo
-
-```bash
-https://github.com/Neeraj319/streammmm
-```
-
-```
+```sh
+git clone https://github.com/Neeraj319/streammmm
 cd streammmm
-```
-
-```
+cp .env.example .env # Configure env first
 make up
 ```
 
-If you want to make changes the rest api then edit files in the REST folder.
+If you want to make changes the rest api then edit files in the `REST` folder.
 
-If you want to make changes in the frontend then edit files in the frontend folder.
+If you want to make changes in the frontend then edit files in the `frontend` folder.
 
-If you want to make changes in the worker then edit files in the worker directory.
+If you want to make changes in the worker then edit files in the `worker` directory.
