@@ -21,3 +21,4 @@ Contents
 
    getting_started
    using_the_api
+   application_architecture

@@ -136,11 +136,11 @@ Send `post` request to `/user/channel/videos
 .. code-block:: json
 
     {
-        "id": 3,
-        "url": "8wdoq6npt4",
-        "title": "my first live stream",
-        "status": "CREATED",
-        "channelId": 2
+    "id": 3,
+    "url": "8wdoq6npt4",
+    "title": "my first live stream",
+    "status": "CREATED",
+    "channelId": 2
     }
 
 .. note::
@@ -198,6 +198,6 @@ After this let's go to the demo app. There you should find a input box for your 
 
 .. [#] Now fill in the following ``http://localhost:8080/hls-live/your_video_url.m3u8``
 
-In my case it is ``http://localhost:8080/hls-live/8wdoq6npt4``
+In my case it is ``http://localhost:8080/hls-live/8wdoq6npt4.m3u8``
 
 .. [#] Now click on apply, you should be able to view your stream live.
